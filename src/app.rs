@@ -58,7 +58,7 @@ fn HomePage() -> impl IntoView {
     let on_click = move |ev: MouseEvent| {
         let value = Command::from_str(&event_target_value(&ev)).expect("Command to come out");
 
-        spawn_local(async { controller_command(value).await.expect("towork") })
+        spawn_local(async { controller(value).await.expect("towork") })
     };
 
     view! {
@@ -99,7 +99,7 @@ impl FromStr for Command {
 }
 
 #[server]
-async fn controller_command(command: Command) -> Result<(), ServerFnError> {
+async fn controller(command: Command) -> Result<(), ServerFnError> {
     let key = Key::from(command);
     let mut enigo = Enigo::new(&Settings::default()).unwrap();
     enigo.key(key, Click).expect("Enige keypress");
