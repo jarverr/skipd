@@ -1,4 +1,8 @@
-use leptos::{prelude::*, reactive::spawn_local};
+use std::str::FromStr;
+
+#[cfg(feature = "ssr")]
+use enigo::{Direction::Click, Enigo, Key, Keyboard, Settings};
+use leptos::{ev::MouseEvent, prelude::*, reactive::spawn_local};
 use leptos_meta::{provide_meta_context, MetaTags, Stylesheet, Title};
 use leptos_router::{
     components::{Route, Router, Routes},
@@ -51,21 +55,17 @@ pub fn App() -> impl IntoView {
 /// Renders the home page of your application.
 #[component]
 fn HomePage() -> impl IntoView {
-    let on_click_arrow = move |_| {
-        spawn_local(async {
-            controller_command(Command::RightArrow)
-                .await
-                .expect("towork")
-        })
+    let on_click = move |ev: MouseEvent| {
+        let value = Command::from_str(&event_target_value(&ev)).expect("Command to come out");
+
+        spawn_local(async { controller_command(value).await.expect("towork") })
     };
-    let on_click_space =
-        move |_| spawn_local(async { controller_command(Command::Space).await.expect("towork") });
 
     view! {
         <section>
         <h1>"SkipD"</h1>
-        <button on:click=on_click_arrow>"rightarrow"</button>
-        <button on:click=on_click_space>"space"</button>
+        <button on:click=on_click value="RightArrow" >"rightarrow"</button>
+        <button on:click=on_click value="Space" >"space"</button>
         </section>
     }
 }
@@ -76,16 +76,31 @@ enum Command {
     Space,
 }
 
+#[cfg(feature = "ssr")]
+impl From<Command> for Key {
+    fn from(command: Command) -> Self {
+        match command {
+            Command::RightArrow => Key::RightArrow,
+            Command::Space => Key::Space,
+        }
+    }
+}
+
+impl FromStr for Command {
+    type Err = ();
+
+    fn from_str(value: &str) -> Result<Self, Self::Err> {
+        match value {
+            "RightArrow" => Ok(Command::RightArrow),
+            "Space" => Ok(Command::Space),
+            _ => Err(()),
+        }
+    }
+}
+
 #[server]
 async fn controller_command(command: Command) -> Result<(), ServerFnError> {
-    #[cfg(feature = "ssr")]
-    use enigo::{Direction::Click, Enigo, Key, Keyboard, Settings};
-
-    let key = match command {
-        Command::RightArrow => Key::RightArrow,
-        Command::Space => Key::Space,
-    };
-
+    let key = Key::from(command);
     let mut enigo = Enigo::new(&Settings::default()).unwrap();
     enigo.key(key, Click).expect("Enige keypress");
 
