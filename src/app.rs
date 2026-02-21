@@ -82,9 +82,9 @@ fn HomePage() -> impl IntoView {
             <button on:click=on_click value="RightArrow" >"\u{21E2}"</button>
         </div>
         <div class="volume">
-            <button on:click=on_click value="VolumeUp" >"\u{1F509}"</button>
+            <button on:click=on_click value="VolumeDown" >"\u{1F509}"</button>
             <button on:click=on_click value="VolumeMute" >"\u{1F507}"</button>
-            <button on:click=on_click value="VolumeDown" >"\u{1F50A}"</button>
+            <button on:click=on_click value="VolumeUp" >"\u{1F50A}"</button>
         </div>
         </section>
     }
