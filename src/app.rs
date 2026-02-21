@@ -76,12 +76,16 @@ fn HomePage() -> impl IntoView {
     view! {
         <section>
         <h1>"SkipD"</h1>
-        <button on:click=on_click value="LeftArrow" >"<-"</button>
-        <button on:click=on_click value="RightArrow" >"->"</button>
-        <button on:click=on_click value="Space" >"space"</button>
-        <button on:click=on_click value="VolumeMute" >"Mute"</button>
-        <button on:click=on_click value="VolumeUp" >"Vol Up"</button>
-        <button on:click=on_click value="VolumeDown" >"Vol Down"</button>
+        <div class="controls">
+            <button on:click=on_click value="LeftArrow" >"\u{21E0}"</button>
+            <button on:click=on_click value="Space" >"\u{25B6}"</button>
+            <button on:click=on_click value="RightArrow" >"\u{21E2}"</button>
+        </div>
+        <div class="volume">
+            <button on:click=on_click value="VolumeUp" >"\u{1F509}"</button>
+            <button on:click=on_click value="VolumeMute" >"\u{1F507}"</button>
+            <button on:click=on_click value="VolumeDown" >"\u{1F50A}"</button>
+        </div>
         </section>
     }
 }
