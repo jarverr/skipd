@@ -56,6 +56,7 @@ section {
         border: 0.1rem outset var(--border);
         background: var(--btn);
         color: var(--text);
+        user-select: none;
 
         &:active {
             border: 0.1rem inset var(--border);
