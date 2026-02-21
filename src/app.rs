@@ -64,36 +64,52 @@ fn HomePage() -> impl IntoView {
     view! {
         <section>
         <h1>"SkipD"</h1>
-        <button on:click=on_click value="RightArrow" >"rightarrow"</button>
+        <button on:click=on_click value="LeftArrow" >"<-"</button>
+        <button on:click=on_click value="RightArrow" >"->"</button>
         <button on:click=on_click value="Space" >"space"</button>
+        <button on:click=on_click value="VolumeMute" >"Mute"</button>
+        <button on:click=on_click value="VolumeUp" >"Vol Up"</button>
+        <button on:click=on_click value="VolumeDown" >"Vol Down"</button>
         </section>
     }
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 enum Command {
+    LeftArrow,
     RightArrow,
     Space,
+    VolumeMute,
+    VolumeUp,
+    VolumeDown,
 }
 
 #[cfg(feature = "ssr")]
 impl From<Command> for Key {
     fn from(command: Command) -> Self {
         match command {
+            Command::LeftArrow => Key::LeftArrow,
             Command::RightArrow => Key::RightArrow,
             Command::Space => Key::Space,
+            Command::VolumeDown => Key::VolumeDown,
+            Command::VolumeUp => Key::VolumeUp,
+            Command::VolumeMute => Key::VolumeMute,
         }
     }
 }
 
 impl FromStr for Command {
-    type Err = ();
+    type Err = String;
 
     fn from_str(value: &str) -> Result<Self, Self::Err> {
         match value {
+            "LeftArrow" => Ok(Command::LeftArrow),
             "RightArrow" => Ok(Command::RightArrow),
             "Space" => Ok(Command::Space),
-            _ => Err(()),
+            "VolumeMute" => Ok(Command::VolumeMute),
+            "VolumeUp" => Ok(Command::VolumeUp),
+            "VolumeDown" => Ok(Command::VolumeDown),
+            _ => Err(format!("Unknown command: {value}")),
         }
     }
 }
