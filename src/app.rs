@@ -2,7 +2,7 @@ use std::str::FromStr;
 
 #[cfg(feature = "ssr")]
 use enigo::{Direction::Click, Enigo, Key, Keyboard, Settings};
-use leptos::{ev::MouseEvent, prelude::*, reactive::spawn_local};
+use leptos::{ev::MouseEvent, logging, prelude::*, reactive::spawn_local};
 use leptos_meta::{provide_meta_context, MetaTags, Stylesheet, Title};
 use leptos_router::{
     components::{Route, Router, Routes},
@@ -56,9 +56,21 @@ pub fn App() -> impl IntoView {
 #[component]
 fn HomePage() -> impl IntoView {
     let on_click = move |ev: MouseEvent| {
-        let value = Command::from_str(&event_target_value(&ev)).expect("Command to come out");
+        let raw = event_target_value(&ev);
 
-        spawn_local(async { controller(value).await.expect("towork") })
+        let command = match Command::from_str(&raw) {
+            Ok(cmd) => cmd,
+            Err(err) => {
+                logging::error!("Invalid command from  UI: {err}");
+                return;
+            }
+        };
+
+        spawn_local(async {
+            if let Err(err) = controller(command).await {
+                logging::error!("Controller failed {err}")
+            }
+        })
     };
 
     view! {
