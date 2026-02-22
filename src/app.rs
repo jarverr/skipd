@@ -77,14 +77,26 @@ fn HomePage() -> impl IntoView {
         <section>
         <h1>"SkipD"</h1>
         <div class="controls">
-            <button on:click=on_click value="LeftArrow" >"\u{21E0}"</button>
-            <button on:click=on_click value="Space" >"\u{25B6}"</button>
-            <button on:click=on_click value="RightArrow" >"\u{21E2}"</button>
+            <button on:click=on_click value="LeftArrow">
+                <img class="icon" src="/backward-svgrepo-com.svg" alt="Back"/>
+            </button>
+            <button on:click=on_click value="Space">
+                <img class="icon" src="/play-svgrepo-com.svg" alt="Play"/>
+            </button>
+            <button on:click=on_click value="RightArrow">
+                <img class="icon icon-rotated" src="/backward-svgrepo-com.svg" alt="Next"/>
+            </button>
         </div>
         <div class="volume">
-            <button on:click=on_click value="VolumeDown" >"\u{1F509}"</button>
-            <button on:click=on_click value="VolumeMute" >"\u{1F507}"</button>
-            <button on:click=on_click value="VolumeUp" >"\u{1F50A}"</button>
+            <button on:click=on_click value="VolumeDown">
+                <img class="icon" src="/volume-min-svgrepo-com.svg" alt="Volume down"/>
+            </button>
+            <button on:click=on_click value="VolumeMute">
+                <img class="icon" src="/volume-xmark-svgrepo-com.svg" alt="Mute"/>
+            </button>
+            <button on:click=on_click value="VolumeUp">
+                <img class="icon" src="/volume-max-svgrepo-com.svg" alt="Volume up"/>
+            </button>
         </div>
         </section>
     }
