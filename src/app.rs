@@ -1,8 +1,6 @@
-use std::str::FromStr;
-
 #[cfg(feature = "ssr")]
 use enigo::{Direction::Click, Enigo, Key, Keyboard, Settings};
-use leptos::{ev::MouseEvent, logging, prelude::*, reactive::spawn_local};
+use leptos::{logging, prelude::*, reactive::spawn_local};
 use leptos_meta::{provide_meta_context, MetaTags, Stylesheet, Title};
 use leptos_router::{
     components::{Route, Router, Routes},
@@ -55,18 +53,8 @@ pub fn App() -> impl IntoView {
 /// Renders the home page of your application.
 #[component]
 fn HomePage() -> impl IntoView {
-    let on_click = move |ev: MouseEvent| {
-        let raw = event_target_value(&ev);
-
-        let command = match Command::from_str(&raw) {
-            Ok(cmd) => cmd,
-            Err(err) => {
-                logging::error!("Invalid command from  UI: {err}");
-                return;
-            }
-        };
-
-        spawn_local(async {
+    let on_click = move |command: Command| {
+        spawn_local(async move {
             if let Err(err) = controller(command).await {
                 logging::error!("Controller failed {err}")
             }
@@ -77,24 +65,24 @@ fn HomePage() -> impl IntoView {
         <section>
         <h1>"SkipD"</h1>
         <div class="controls">
-            <button on:click=on_click value="LeftArrow">
+            <button on:click=move |_| on_click(Command::LeftArrow)>
                 <img class="icon" src="/backward-svgrepo-com.svg" alt="Back"/>
             </button>
-            <button on:click=on_click value="Space">
+            <button on:click=move |_| on_click(Command::Space)>
                 <img class="icon" src="/play-svgrepo-com.svg" alt="Play"/>
             </button>
-            <button on:click=on_click value="RightArrow">
+            <button on:click=move |_| on_click(Command::RightArrow)>
                 <img class="icon icon-rotated" src="/backward-svgrepo-com.svg" alt="Next"/>
             </button>
         </div>
         <div class="volume">
-            <button on:click=on_click value="VolumeDown">
+            <button on:click=move |_| on_click(Command::VolumeDown)>
                 <img class="icon" src="/volume-min-svgrepo-com.svg" alt="Volume down"/>
             </button>
-            <button on:click=on_click value="VolumeMute">
+            <button on:click=move |_| on_click(Command::VolumeMute)>
                 <img class="icon" src="/volume-xmark-svgrepo-com.svg" alt="Mute"/>
             </button>
-            <button on:click=on_click value="VolumeUp">
+            <button on:click=move |_| on_click(Command::VolumeUp)>
                 <img class="icon" src="/volume-max-svgrepo-com.svg" alt="Volume up"/>
             </button>
         </div>
@@ -122,22 +110,6 @@ impl From<Command> for Key {
             Command::VolumeDown => Key::VolumeDown,
             Command::VolumeUp => Key::VolumeUp,
             Command::VolumeMute => Key::VolumeMute,
-        }
-    }
-}
-
-impl FromStr for Command {
-    type Err = String;
-
-    fn from_str(value: &str) -> Result<Self, Self::Err> {
-        match value {
-            "LeftArrow" => Ok(Command::LeftArrow),
-            "RightArrow" => Ok(Command::RightArrow),
-            "Space" => Ok(Command::Space),
-            "VolumeMute" => Ok(Command::VolumeMute),
-            "VolumeUp" => Ok(Command::VolumeUp),
-            "VolumeDown" => Ok(Command::VolumeDown),
-            _ => Err(format!("Unknown command: {value}")),
         }
     }
 }
