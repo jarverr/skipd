@@ -117,8 +117,11 @@ impl From<Command> for Key {
 #[server]
 async fn controller(command: Command) -> Result<(), ServerFnError> {
     let key = Key::from(command);
-    let mut enigo = Enigo::new(&Settings::default()).unwrap();
-    enigo.key(key, Click).expect("Enige keypress");
+    let mut enigo = Enigo::new(&Settings::default())
+        .map_err(|err| ServerFnError::new(format!("enigo initialisation error: {}", err)))?;
+    enigo
+        .key(key, Click)
+        .map_err(|err| ServerFnError::new(format!("enigo keypress error: {}", err)))?;
 
     Ok(())
 }
