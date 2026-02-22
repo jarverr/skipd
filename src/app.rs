@@ -1,5 +1,3 @@
-#[cfg(feature = "ssr")]
-use enigo::{Direction::Click, Enigo, Key, Keyboard, Settings};
 use leptos::{logging, prelude::*, reactive::spawn_local};
 use leptos_meta::{provide_meta_context, MetaTags, Stylesheet, Title};
 use leptos_router::{
@@ -7,6 +5,16 @@ use leptos_router::{
     StaticSegment,
 };
 use serde::{Deserialize, Serialize};
+#[cfg(feature = "ssr")]
+use {
+    enigo::{Direction::Click, Enigo, Key, Keyboard, Settings},
+    std::sync::{LazyLock, Mutex},
+};
+
+#[cfg(feature = "ssr")]
+static ENIGO: LazyLock<Mutex<Enigo>> = LazyLock::new(|| {
+    Mutex::new(Enigo::new(&Settings::default()).expect("Enigo to be initialised"))
+});
 
 pub fn shell(options: LeptosOptions) -> impl IntoView {
     view! {
@@ -118,7 +126,7 @@ impl From<Command> for Key {
 #[server]
 async fn controller(command: Command) -> Result<(), ServerFnError> {
     let key = Key::from(command);
-    let mut enigo = Enigo::new(&Settings::default()).map_err(|err| {
+    let mut enigo = ENIGO.lock().map_err(|err| {
         let msg = format!("enigo init failed: {}", err);
         logging::error!("{}", msg);
 
