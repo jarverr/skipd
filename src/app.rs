@@ -56,7 +56,8 @@ fn HomePage() -> impl IntoView {
     let on_click = move |command: Command| {
         spawn_local(async move {
             if let Err(err) = controller(command).await {
-                logging::error!("Controller failed {err}")
+                // Todo: make this show a UI error
+                logging::error!("server: {err}")
             }
         })
     };
@@ -117,11 +118,18 @@ impl From<Command> for Key {
 #[server]
 async fn controller(command: Command) -> Result<(), ServerFnError> {
     let key = Key::from(command);
-    let mut enigo = Enigo::new(&Settings::default())
-        .map_err(|err| ServerFnError::new(format!("enigo initialisation error: {}", err)))?;
-    enigo
-        .key(key, Click)
-        .map_err(|err| ServerFnError::new(format!("enigo keypress error: {}", err)))?;
+    let mut enigo = Enigo::new(&Settings::default()).map_err(|err| {
+        let msg = format!("enigo init failed: {}", err);
+        logging::error!("{}", msg);
+
+        ServerFnError::new(msg)
+    })?;
+    enigo.key(key, Click).map_err(|err| {
+        let msg = format!("controller keypress failed for {:?}: err:{}", key, err);
+        logging::error!("{}", msg);
+
+        ServerFnError::new(msg)
+    })?;
 
     Ok(())
 }
