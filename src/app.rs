@@ -37,7 +37,7 @@ pub fn App() -> impl IntoView {
         <Stylesheet id="leptos" href="/pkg/skipd.css"/>
 
         // sets the document title
-        <Title text="Welcome to Leptos"/>
+        <Title text="Skipd Remote"/>
 
         // content for this welcome page
         <Router>
