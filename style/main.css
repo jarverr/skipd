@@ -41,9 +41,8 @@ section {
     gap: 1rem;
 
     h1 {
-        margin: 0 0 0.25rem;
-        font-size: 1.6rem;
-        letter-spacing: 0.02em;
+        font-size: 2rem;
+        color: oklch(0.98 0.01 250);
     }
 
     div {
@@ -57,9 +56,11 @@ section {
         padding: 2rem;
         font-size: 2rem;
         text-align: center;
-        background: var(--surface-2);
+        border: 0;
+        border-radius: 1rem;
+        background: var(--stroke);
         color: var(--text);
-        user-select: none;
+        touch-action: manipulation;
 
         &:active {
             transform: scale(0.96);
@@ -76,5 +77,9 @@ section {
         .icon-rotated {
             transform: rotate(180deg);
         }
+    }
+
+    .controls button:nth-child(2) {
+        background: linear-gradient(var(--accent-1), var(--accent-2));
     }
 }
